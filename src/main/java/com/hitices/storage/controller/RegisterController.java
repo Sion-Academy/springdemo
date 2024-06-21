@@ -22,11 +22,15 @@ public class RegisterController {
     private DataSourceManager dataSourceManager;
 
     @PostMapping("/heartbeat")
-    public List<DataSourceBean> receiveHeartbeat(@RequestBody Heartbeat heartbeat) {
+    public HeartbeatCallback receiveHeartbeat(@RequestBody Heartbeat heartbeat) {
         registrationService.update(heartbeat);
         System.out.println("Received heartbeat from " + heartbeat.getAgentId());
         // todo: 返回整体的源库映射, 以及路由表
-        return dataSourceManager.getAgentDataSource(heartbeat.getAgentId());
+        return new HeartbeatCallback(
+                dataSourceManager.getAgentMap(),
+                dataSourceManager.getStorageMap(),
+                dataSourceManager.getAgentDataSource(heartbeat.getAgentId()));
+
     }
 
     @PostMapping("/register")
