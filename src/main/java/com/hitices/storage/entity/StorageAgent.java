@@ -9,8 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class StorageAgent {
+    private String id;
     private String ip;
     private String port;
+    private String name;
     // todo: add more fields
     private String status;
     private long lastHeartbeat;
@@ -23,6 +25,7 @@ public class StorageAgent {
     public StorageAgent(RegistrationRequest registrationRequest, String status){
         this.ip = registrationRequest.getIp();
         this.port = registrationRequest.getPort();
+        this.name = registrationRequest.getName();
         this.status = status;
         this.lastHeartbeat = System.currentTimeMillis();
     }

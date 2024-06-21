@@ -12,5 +12,6 @@ import lombok.Setter;
 public class RegistrationRequest {
     private String ip;
     private String port;
+    private String name;
     // todo: add more fields
 }

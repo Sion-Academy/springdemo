@@ -46,7 +46,17 @@ public class RegistrationService {
 
 
     public List<StorageAgent> listAgents() {
-        return new ArrayList<>(registrations.values());
+        List<StorageAgent> databases = new ArrayList<>();
+        for (String id: registrations.keySet()) {
+            StorageAgent storageAgent = registrations.get(id);
+            storageAgent.setId(id);
+            databases.add(storageAgent);
+        }
+        return databases;
+    }
+
+    public StorageAgent getAgent(String id) {
+        return registrations.get(id);
     }
 }
 
