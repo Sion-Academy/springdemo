@@ -25,6 +25,7 @@ public class RegistrationService {
     public void update(Heartbeat heartbeat) {
         String uniqueId = heartbeat.getAgentId();
         if (uniqueId!=null){
+            System.out.println(heartbeat.getRegistration().getDatabases());
             registrations.put(uniqueId, new StorageAgent(heartbeat.getRegistration(), "active"));
         }
     }
@@ -39,6 +40,7 @@ public class RegistrationService {
                     System.out.println("Agent " + id + " is considered offline.");
                     info.setStatus("offline");
                     registrations.put(id, info);
+                    // todo: remove all mappings related to this agent
                 }
             }
         });
