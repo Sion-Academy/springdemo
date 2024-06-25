@@ -1,6 +1,8 @@
 package com.hitices.storage.controller;
 
 import com.hitices.storage.bean.DatabaseRegisterBean;
+import com.hitices.storage.bean.SearchBean;
+import com.hitices.storage.core.DataSourceManager;
 import com.hitices.storage.entity.StorageAgent;
 import com.hitices.storage.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ public class AgentController {
 
     @Autowired
     private RegistrationService registrationService;
+
+    @Autowired
+    private DataSourceManager dataSourceManager;
 
     @GetMapping("/agent/list")
     public List<StorageAgent> listAgents() {
@@ -34,5 +39,13 @@ public class AgentController {
         StorageAgent storageAgent = registrationService.getAgent(databaseRegisterBean.getAgentId());
         return restTemplate.postForEntity("http://"+storageAgent.getIp() + ":" + storageAgent.getPort() + "/addDatabase",
                 databaseRegisterBean, String.class).getBody();
+    }
+
+    @PostMapping("/searchData")
+    public String searchData(@RequestBody SearchBean searchBean) {
+        RestTemplate restTemplate = new RestTemplate();
+        StorageAgent storageAgent = registrationService.getAgent(dataSourceManager.getAgentMap().get(searchBean.getSourceId()));
+        return restTemplate.postForEntity("http://"+storageAgent.getIp() + ":" + storageAgent.getPort() + "/searchData",
+                searchBean, String.class).getBody();
     }
 }

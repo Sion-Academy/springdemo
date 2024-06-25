@@ -18,6 +18,11 @@ public class RegistrationService {
 
     public String register(RegistrationRequest request) {
         String uniqueId = UUID.randomUUID().toString();
+        for (String storageId : registrations.keySet()){
+            if (registrations.get(storageId).getName().equals(request.getName())){
+                return storageId;
+            }
+        }
         registrations.put(uniqueId, new StorageAgent(request, "active"));
         return uniqueId;
     }

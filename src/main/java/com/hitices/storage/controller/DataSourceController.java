@@ -35,4 +35,9 @@ public class DataSourceController {
         dataSourceManager.registerAgentMap(storageBean.getSourceId(),storageBean.getAgentId());
         dataSourceManager.registerStorageMap(storageBean.getSourceId(),storageBean.getStorage());
     }
+
+    @GetMapping("/route/list")
+    public List<StorageBean> getDataSourceRoute() {
+        return dataSourceManager.getDataSourceRoute();
+    }
 }

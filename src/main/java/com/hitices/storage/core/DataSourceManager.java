@@ -1,6 +1,7 @@
 package com.hitices.storage.core;
 
 import com.hitices.storage.bean.DataSourceBean;
+import com.hitices.storage.bean.StorageBean;
 import com.hitices.storage.service.RegistrationService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,15 @@ public class DataSourceManager {
         }
         return dataSourceBeanList;
     }
+
+    public List<StorageBean> getDataSourceRoute(){
+        List<StorageBean> storageBeans = new ArrayList<>();
+        for (String name: sourceMap.keySet()) {
+            storageBeans.add(new StorageBean(name, agentMap.get(name), storageMap.get(name)));
+        }
+        return storageBeans;
+    }
+
 
     // 添加数据源-数据代理映射
     public void registerAgentMap(String sourceId, String agentId) {
