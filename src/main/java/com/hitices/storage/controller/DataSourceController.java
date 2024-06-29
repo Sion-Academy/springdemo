@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hitices.storage.bean.DataSourceBean;
 import com.hitices.storage.bean.DataSourceRegisterBean;
 import com.hitices.storage.bean.StorageBean;
+import com.hitices.storage.core.DataSource;
 import com.hitices.storage.core.DataSourceFactory;
 import com.hitices.storage.core.DataSourceManager;
 import com.hitices.storage.entity.DataSourceEntity;
@@ -49,6 +50,11 @@ public class DataSourceController {
     @GetMapping("/source/list")
     public List<DataSourceBean> getDataSource() {
         return dataSourceManager.getDataSource();
+    }
+
+    @GetMapping("/source/detail")
+    public DataSource getDataSourceDetail(@RequestParam(name = "id") String id) {
+        return dataSourceManager.getSourceMap().get(id);
     }
 
     @PostMapping("/source/route")

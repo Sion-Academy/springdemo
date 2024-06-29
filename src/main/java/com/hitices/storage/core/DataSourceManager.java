@@ -42,8 +42,8 @@ public class DataSourceManager implements CommandLineRunner {
     // 添加数据源
     public String registerDataSource(DataSource source) {
         String identifier = String.valueOf(UUID.randomUUID());
-        sourceMap.put(identifier, source);
         source.setId(identifier);
+        sourceMap.put(identifier, source);
         log.info("Data source " + identifier + " has been registered.");
         return identifier;
     }
@@ -94,6 +94,7 @@ public class DataSourceManager implements CommandLineRunner {
         for (DataSourceEntity entity : dataSourceEntities) {
             DataSource source = dataSourceFactory.getSource(
                     new DataSourceRegisterBean(entity.getType(), mapper.readTree(entity.getDetail())));
+            source.setId(entity.getId());
             sourceMap.put(entity.getId(), source);
         }
         List<StorageRouteEntity> storageRouteEntities = storageRouteRepository.findAll();

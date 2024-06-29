@@ -33,6 +33,20 @@ public class AgentController {
         return restTemplate.getForObject("http://"+storageAgent.getIp() + ":" + storageAgent.getPort() + "/getDatabases", List.class);
     }
 
+    @GetMapping("/agent/detail")
+    public StorageAgent getAgentDetail(@RequestParam(name = "id") String id) {
+        return registrationService.getAgent(id);
+    }
+
+    @GetMapping("/database/detail")
+    public Object getDatabaseDetail(@RequestParam(name = "agentId") String agentId, @RequestParam(name = "storageId") String storageId) {
+        RestTemplate restTemplate = new RestTemplate();
+        StorageAgent storageAgent = registrationService.getAgent(agentId);
+        return restTemplate.getForObject(
+                "http://"+storageAgent.getIp() + ":" + storageAgent.getPort() + "/database/detail?storageId="+storageId,
+                Object.class);
+    }
+
     @PostMapping("/database/register")
     public String registerDatabase(@RequestBody DatabaseRegisterBean databaseRegisterBean) {
         RestTemplate restTemplate = new RestTemplate();
