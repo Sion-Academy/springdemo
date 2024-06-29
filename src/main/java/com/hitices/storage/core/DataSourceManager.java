@@ -1,10 +1,19 @@
 package com.hitices.storage.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.hitices.storage.bean.DataSourceBean;
+import com.hitices.storage.bean.DataSourceRegisterBean;
 import com.hitices.storage.bean.StorageBean;
+import com.hitices.storage.entity.DataSourceEntity;
+import com.hitices.storage.entity.StorageRouteEntity;
+import com.hitices.storage.repository.DataSourceRepository;
+import com.hitices.storage.repository.StorageRouteRepository;
 import com.hitices.storage.service.RegistrationService;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,20 +24,29 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @Component
-public class DataSourceManager {
+@Slf4j
+public class DataSourceManager implements CommandLineRunner {
     private final Map<String, DataSource> sourceMap = new ConcurrentHashMap<>();
     // 数据源-数据代理映射关系
     private final Map<String, String> agentMap = new ConcurrentHashMap<>();
     // 数据源-数据库映射关系
     private final Map<String, String> storageMap = new ConcurrentHashMap<>();
 
+    @Autowired
+    private DataSourceRepository dataSourceRepository;
+    @Autowired
+    private StorageRouteRepository storageRouteRepository;
+    @Autowired
+    private DataSourceFactory dataSourceFactory;
 
     // 添加数据源
     public String registerDataSource(DataSource source) {
         String identifier = String.valueOf(UUID.randomUUID());
+        Gson gson = new Gson();
         sourceMap.put(identifier, source);
         source.setId(identifier);
-        System.out.println("Data source " + identifier + " has been registered.");
+        dataSourceRepository.save(new DataSourceEntity(identifier, source.getType(), gson.toJson(source.getConnectionDetails())));
+        log.info("Data source " + identifier + " has been registered.");
         return identifier;
     }
 
@@ -69,5 +87,21 @@ public class DataSourceManager {
     public void registerStorageMap(String sourceId, String databaseId) {
         // todo: 判断数据库的可用性
         storageMap.put(sourceId, databaseId);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        List<DataSourceEntity> dataSourceEntities = dataSourceRepository.findAll();
+        for (DataSourceEntity entity : dataSourceEntities) {
+            DataSource source = dataSourceFactory.getSource(
+                    new DataSourceRegisterBean(entity.getType(), mapper.readTree(entity.getDetail())));
+            sourceMap.put(entity.getId(), source);
+        }
+        List<StorageRouteEntity> storageRouteEntities = storageRouteRepository.findAll();
+        for (StorageRouteEntity entity : storageRouteEntities) {
+            agentMap.put(entity.getSourceId(), entity.getAgentId());
+            storageMap.put(entity.getSourceId(), entity.getStorage());
+        }
     }
 }

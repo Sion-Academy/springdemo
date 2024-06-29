@@ -2,7 +2,11 @@ package com.hitices.storage.service;
 
 import com.hitices.storage.bean.Heartbeat;
 import com.hitices.storage.bean.RegistrationRequest;
-import com.hitices.storage.entity.StorageAgent;
+import com.hitices.storage.core.StorageAgent;
+import com.hitices.storage.entity.StorageAgentEntity;
+import com.hitices.storage.repository.StorageAgentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -13,25 +17,34 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 @Service
-public class RegistrationService {
+public class RegistrationService implements CommandLineRunner {
     private final ConcurrentHashMap<String, StorageAgent> registrations = new ConcurrentHashMap<>();
 
+    @Autowired
+    private StorageAgentRepository storageAgentRepository;
+
     public String register(RegistrationRequest request) {
+        StorageAgentEntity agentEntity = storageAgentRepository.findByName(request.getName());
         String uniqueId = UUID.randomUUID().toString();
+        if (agentEntity != null) {
+            uniqueId = agentEntity.getId();
+        }
         for (String storageId : registrations.keySet()){
             if (registrations.get(storageId).getName().equals(request.getName())){
                 return storageId;
             }
         }
         registrations.put(uniqueId, new StorageAgent(request, "active"));
+        storageAgentRepository.save(new StorageAgentEntity(uniqueId, request.getName(), request.getIp(), request.getPort()));
         return uniqueId;
     }
 
     public void update(Heartbeat heartbeat) {
         String uniqueId = heartbeat.getAgentId();
         if (uniqueId!=null){
-            System.out.println(heartbeat.getRegistration().getDatabases());
-            registrations.put(uniqueId, new StorageAgent(heartbeat.getRegistration(), "active"));
+            RegistrationRequest request = heartbeat.getRegistration();
+            registrations.put(uniqueId, new StorageAgent(request, "active"));
+            storageAgentRepository.save(new StorageAgentEntity(uniqueId, request.getName(), request.getIp(), request.getPort()));
         }
     }
 
@@ -64,6 +77,19 @@ public class RegistrationService {
 
     public StorageAgent getAgent(String id) {
         return registrations.get(id);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        List<StorageAgentEntity> storageAgentEntities = storageAgentRepository.findAll();
+        for (StorageAgentEntity entity : storageAgentEntities) {
+            registrations.put(entity.getId(),
+                    new StorageAgent(
+                            entity.getId(),
+                            entity.getName(),
+                            entity.getIp(),
+                            entity.getPort(), "offline"));
+        }
     }
 }
 

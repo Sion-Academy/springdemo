@@ -3,7 +3,7 @@ package com.hitices.storage.controller;
 import com.hitices.storage.bean.DatabaseRegisterBean;
 import com.hitices.storage.bean.SearchBean;
 import com.hitices.storage.core.DataSourceManager;
-import com.hitices.storage.entity.StorageAgent;
+import com.hitices.storage.core.StorageAgent;
 import com.hitices.storage.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

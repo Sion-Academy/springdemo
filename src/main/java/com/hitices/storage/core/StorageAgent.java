@@ -1,11 +1,10 @@
-package com.hitices.storage.entity;
+package com.hitices.storage.core;
 
 import com.hitices.storage.bean.RegistrationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -21,6 +20,14 @@ public class StorageAgent {
     private String status;
     private long lastHeartbeat;
     private int missedHeartbeats = 0;
+
+    public StorageAgent(String id, String name, String ip, String port, String offline) {
+        this.id = id;
+        this.name = name;
+        this.ip = ip;
+        this.port = port;
+        this.status = offline;
+    }
 
     public void incrementMissedHeartbeats() {
         this.missedHeartbeats++;
