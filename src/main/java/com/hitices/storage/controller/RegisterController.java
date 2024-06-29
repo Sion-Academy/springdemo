@@ -24,7 +24,8 @@ public class RegisterController {
         return new HeartbeatCallback(
                 dataSourceManager.getAgentMap(),
                 dataSourceManager.getStorageMap(),
-                dataSourceManager.getAgentDataSource(heartbeat.getAgentId()));
+                dataSourceManager.getAgentDataSource(heartbeat.getAgentId()),
+                registrationService.getAgentRoute());
 
     }
 

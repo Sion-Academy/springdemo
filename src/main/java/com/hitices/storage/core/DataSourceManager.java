@@ -42,10 +42,8 @@ public class DataSourceManager implements CommandLineRunner {
     // 添加数据源
     public String registerDataSource(DataSource source) {
         String identifier = String.valueOf(UUID.randomUUID());
-        Gson gson = new Gson();
         sourceMap.put(identifier, source);
         source.setId(identifier);
-        dataSourceRepository.save(new DataSourceEntity(identifier, source.getType(), gson.toJson(source.getConnectionDetails())));
         log.info("Data source " + identifier + " has been registered.");
         return identifier;
     }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,6 +47,14 @@ public class RegistrationService implements CommandLineRunner {
             registrations.put(uniqueId, new StorageAgent(request, "active"));
             storageAgentRepository.save(new StorageAgentEntity(uniqueId, request.getName(), request.getIp(), request.getPort()));
         }
+    }
+
+    public Map<String, String> getAgentRoute(){
+        Map<String, String> agentRoute = new ConcurrentHashMap<>();
+        for (String id: registrations.keySet()){
+            agentRoute.put(id, registrations.get(id).getIp()+":"+registrations.get(id).getPort());
+        }
+        return agentRoute;
     }
 
     @Scheduled(fixedRate = 10000)
