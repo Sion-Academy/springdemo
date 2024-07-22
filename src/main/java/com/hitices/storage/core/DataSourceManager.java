@@ -52,6 +52,7 @@ public class DataSourceManager implements CommandLineRunner {
         List<DataSourceBean> dataSourceBeanList = new ArrayList<>();
         for (String name: sourceMap.keySet()) {
             DataSource source = sourceMap.get(name);
+            System.out.println(source.getConnectionDetails());
             dataSourceBeanList.add(new DataSourceBean(name, source.getType(), source.getConnectionDetails()));
         }
         return dataSourceBeanList;
@@ -59,7 +60,7 @@ public class DataSourceManager implements CommandLineRunner {
 
     public List<StorageBean> getDataSourceRoute(){
         List<StorageBean> storageBeans = new ArrayList<>();
-        for (String name: sourceMap.keySet()) {
+        for (String name: agentMap.keySet()) {
             storageBeans.add(new StorageBean(name, agentMap.get(name), storageMap.get(name)));
         }
         return storageBeans;

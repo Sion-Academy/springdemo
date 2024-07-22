@@ -35,7 +35,7 @@ public class RegistrationService implements CommandLineRunner {
                 return storageId;
             }
         }
-        registrations.put(uniqueId, new StorageAgent(request, "active"));
+        registrations.put(uniqueId, new StorageAgent(request, "online"));
         storageAgentRepository.save(new StorageAgentEntity(uniqueId, request.getName(), request.getIp(), request.getPort()));
         return uniqueId;
     }
@@ -44,7 +44,7 @@ public class RegistrationService implements CommandLineRunner {
         String uniqueId = heartbeat.getAgentId();
         if (uniqueId!=null){
             RegistrationRequest request = heartbeat.getRegistration();
-            registrations.put(uniqueId, new StorageAgent(request, "active"));
+            registrations.put(uniqueId, new StorageAgent(request, "online"));
             storageAgentRepository.save(new StorageAgentEntity(uniqueId, request.getName(), request.getIp(), request.getPort()));
         }
     }
