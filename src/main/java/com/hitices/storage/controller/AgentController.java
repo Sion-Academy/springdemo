@@ -4,6 +4,7 @@ import com.hitices.storage.bean.DatabaseRegisterBean;
 import com.hitices.storage.bean.SearchBean;
 import com.hitices.storage.core.DataSourceManager;
 import com.hitices.storage.core.StorageAgent;
+import com.hitices.storage.service.DatabaseService;
 import com.hitices.storage.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class AgentController {
     @Autowired
     private DataSourceManager dataSourceManager;
 
+    @Autowired
+    private DatabaseService databaseService;
+
     @GetMapping("/agent/list")
     public List<StorageAgent> listAgents() {
         return registrationService.listAgents();
@@ -28,9 +32,7 @@ public class AgentController {
 
     @GetMapping("/agent/database")
     public List listDatabase(@RequestParam(name = "id") String id) {
-        RestTemplate restTemplate = new RestTemplate();
-        StorageAgent storageAgent = registrationService.getAgent(id);
-        return restTemplate.getForObject("http://"+storageAgent.getIp() + ":" + storageAgent.getPort() + "/getDatabases", List.class);
+        return  databaseService.getDatabase(id);
     }
 
     @GetMapping("/agent/detail")
@@ -39,20 +41,13 @@ public class AgentController {
     }
 
     @GetMapping("/database/detail")
-    public Object getDatabaseDetail(@RequestParam(name = "agentId") String agentId, @RequestParam(name = "storageId") String storageId) {
-        RestTemplate restTemplate = new RestTemplate();
-        StorageAgent storageAgent = registrationService.getAgent(agentId);
-        return restTemplate.getForObject(
-                "http://"+storageAgent.getIp() + ":" + storageAgent.getPort() + "/database/detail?storageId="+storageId,
-                Object.class);
+    public Object getDatabaseDetail(@RequestParam(name = "storageId") String storageId) {
+        return  databaseService.getDatabaseDetail(storageId);
     }
 
     @PostMapping("/database/register")
     public String registerDatabase(@RequestBody DatabaseRegisterBean databaseRegisterBean) {
-        RestTemplate restTemplate = new RestTemplate();
-        StorageAgent storageAgent = registrationService.getAgent(databaseRegisterBean.getAgentId());
-        return restTemplate.postForEntity("http://"+storageAgent.getIp() + ":" + storageAgent.getPort() + "/addDatabase",
-                databaseRegisterBean, String.class).getBody();
+        return  databaseService.addDatabase(databaseRegisterBean);
     }
 
     @PostMapping("/searchData")

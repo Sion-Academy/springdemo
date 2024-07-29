@@ -1,10 +1,12 @@
 package com.hitices.storage.core;
 
+import com.hitices.storage.bean.AgentDatabaseBean;
 import com.hitices.storage.bean.RegistrationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -16,7 +18,7 @@ public class StorageAgent {
     private String port;
     private String name;
     // todo: add more fields
-    private Set<String> databases;
+    private List<AgentDatabaseBean> databases;
     private String status;
     private long lastHeartbeat;
     private int missedHeartbeats = 0;

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -16,5 +17,5 @@ public class RegistrationRequest {
     private String port;
     private String name;
     // todo: add more fields
-    private Set<String> databases;
+    private List<AgentDatabaseBean> databases;
 }

@@ -43,6 +43,7 @@ public class RegistrationService implements CommandLineRunner {
     public void update(Heartbeat heartbeat) {
         String uniqueId = heartbeat.getAgentId();
         if (uniqueId!=null){
+            //todo: 根据心跳连接数据更新数据库的状态
             RegistrationRequest request = heartbeat.getRegistration();
             registrations.put(uniqueId, new StorageAgent(request, "online"));
             storageAgentRepository.save(new StorageAgentEntity(uniqueId, request.getName(), request.getIp(), request.getPort()));
@@ -57,7 +58,7 @@ public class RegistrationService implements CommandLineRunner {
         return agentRoute;
     }
 
-//    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)
     public void checkAgentStatuses() {
         long currentTime = System.currentTimeMillis();
         registrations.forEach((id, info) -> {

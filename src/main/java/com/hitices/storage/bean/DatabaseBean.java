@@ -1,21 +1,27 @@
 package com.hitices.storage.bean;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DatabaseRegisterBean {
+public class DatabaseBean {
+    private String id;
+    private String agentName;
     private String name;
-    private String agentId;
     private String databaseType;
+    private String status;
+    private Long sourceNum;
     private String host;
     private int port;
-    private JsonNode detail;
+    private String detail;
     private String description;
+    private Date createTime;
+    private Date updateTime;
 }

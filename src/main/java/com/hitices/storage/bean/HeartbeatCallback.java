@@ -1,5 +1,6 @@
 package com.hitices.storage.bean;
 
+import com.hitices.storage.entity.DatabaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,10 @@ public class HeartbeatCallback {
      * 数据源
      */
     List<DataSourceBean> dataSourceBeans;
+    /**
+     * 数据库
+     */
+    List<DatabaseEntity> databases;
     /**
      * 数据代理路由表
      */

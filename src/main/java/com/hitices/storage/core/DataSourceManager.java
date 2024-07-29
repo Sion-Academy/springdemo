@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.hitices.storage.bean.DataSourceBean;
 import com.hitices.storage.bean.DataSourceRegisterBean;
 import com.hitices.storage.bean.StorageBean;
+import com.hitices.storage.core.source.LogDataSource;
 import com.hitices.storage.entity.DataSourceEntity;
 import com.hitices.storage.entity.StorageRouteEntity;
 import com.hitices.storage.repository.DataSourceRepository;
@@ -69,6 +70,16 @@ public class DataSourceManager implements CommandLineRunner {
         return storageBeans;
     }
 
+    public Long getDataSourceCountByDatabase(String id){
+        Long count = 0L;
+        for (String name: storageMap.keySet()) {
+            if(storageMap.get(name).equals(id)){
+                count++;
+            }
+        }
+        return count;
+    }
+
 
     // 添加数据源-数据代理映射
     public void registerAgentMap(String sourceId, String agentId) {
@@ -80,7 +91,10 @@ public class DataSourceManager implements CommandLineRunner {
         List<DataSourceBean> dataSourceBeanList = new ArrayList<>();
         for (String id: agentMap.keySet()) {
             if (agentMap.get(id).equals(agentId)){
-                DataSourceEntity dataSourceEntity = dataSourceRepository.findById(id).get();
+                DataSourceEntity dataSourceEntity = dataSourceRepository.findById(id).orElse(null);
+                if (dataSourceEntity == null){
+                    continue;
+                }
                 DataSource source = sourceMap.get(dataSourceEntity.getId());
                 dataSourceBeanList.add(new DataSourceBean(dataSourceEntity.getId(), dataSourceEntity.getName(),
                         dataSourceEntity.getStatus(),dataSourceEntity.getType(),source.getConnectionDetails(),
