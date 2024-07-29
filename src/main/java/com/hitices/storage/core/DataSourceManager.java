@@ -50,11 +50,14 @@ public class DataSourceManager implements CommandLineRunner {
 
     public List<DataSourceBean> getDataSource(){
         List<DataSourceBean> dataSourceBeanList = new ArrayList<>();
-        for (String name: sourceMap.keySet()) {
-            DataSource source = sourceMap.get(name);
-            System.out.println(source.getConnectionDetails());
-            dataSourceBeanList.add(new DataSourceBean(name, source.getType(), source.getConnectionDetails()));
-        }
+        dataSourceRepository.findAll().forEach(dataSourceEntity -> {
+            DataSource source = sourceMap.get(dataSourceEntity.getId());
+            dataSourceBeanList.add(new DataSourceBean(dataSourceEntity.getId(), dataSourceEntity.getName(),
+                    dataSourceEntity.getStatus(),dataSourceEntity.getType(),source.getConnectionDetails(),
+                    dataSourceEntity.getDescription(), dataSourceEntity.getCreateTime(),
+                    dataSourceEntity.getUpdateTime(), dataSourceEntity.getDataUpdateTime()
+                    ));
+        });
         return dataSourceBeanList;
     }
 
@@ -75,9 +78,16 @@ public class DataSourceManager implements CommandLineRunner {
 
     public List<DataSourceBean> getAgentDataSource(String agentId){
         List<DataSourceBean> dataSourceBeanList = new ArrayList<>();
-        for (String name: sourceMap.keySet()) {
-            DataSource source = sourceMap.get(name);
-            dataSourceBeanList.add(new DataSourceBean(name, source.getType(), source.getConnectionDetails()));
+        for (String id: agentMap.keySet()) {
+            if (agentMap.get(id).equals(agentId)){
+                DataSourceEntity dataSourceEntity = dataSourceRepository.findById(id).get();
+                DataSource source = sourceMap.get(dataSourceEntity.getId());
+                dataSourceBeanList.add(new DataSourceBean(dataSourceEntity.getId(), dataSourceEntity.getName(),
+                        dataSourceEntity.getStatus(),dataSourceEntity.getType(),source.getConnectionDetails(),
+                        dataSourceEntity.getDescription(), dataSourceEntity.getCreateTime(),
+                        dataSourceEntity.getUpdateTime(), dataSourceEntity.getDataUpdateTime()
+                ));
+            }
         }
         return dataSourceBeanList;
     }
@@ -94,7 +104,10 @@ public class DataSourceManager implements CommandLineRunner {
         List<DataSourceEntity> dataSourceEntities = dataSourceRepository.findAll();
         for (DataSourceEntity entity : dataSourceEntities) {
             DataSource source = dataSourceFactory.getSource(
-                    new DataSourceRegisterBean(entity.getType(), mapper.readTree(entity.getDetail())));
+                    new DataSourceRegisterBean(entity.getName(),
+                            entity.getType(),
+                            mapper.readTree(entity.getDetail()),
+                            entity.getDescription()));
             source.setId(entity.getId());
             sourceMap.put(entity.getId(), source);
         }

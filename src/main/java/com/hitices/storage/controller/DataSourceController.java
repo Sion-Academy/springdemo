@@ -15,6 +15,7 @@ import com.hitices.storage.repository.StorageRouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -36,15 +37,19 @@ public class DataSourceController {
     @PostMapping("/source/register")
     public String registerDataSource(@RequestBody DataSourceRegisterBean dataSourceRegisterBean) {
         ObjectMapper mapper = new ObjectMapper();
-        String name = dataSourceManager.registerDataSource(dataSourceFactory.getSource(dataSourceRegisterBean));
+        String id = dataSourceManager.registerDataSource(dataSourceFactory.getSource(dataSourceRegisterBean));
         try {
-            dataSourceRepository.save(new DataSourceEntity(name,
+            dataSourceRepository.save(new DataSourceEntity(id,
+                    dataSourceRegisterBean.getName(),
+                    "activate",
                     dataSourceRegisterBean.getType(),
-                    mapper.writeValueAsString(dataSourceRegisterBean.getDetail())));
+                    mapper.writeValueAsString(dataSourceRegisterBean.getDetail()),
+                    dataSourceRegisterBean.getDescription(),
+                    new Date(), new Date(), null));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return name;
+        return id;
     }
 
     @GetMapping("/source/list")
@@ -53,8 +58,8 @@ public class DataSourceController {
     }
 
     @GetMapping("/source/detail")
-    public DataSource getDataSourceDetail(@RequestParam(name = "id") String id) {
-        return dataSourceManager.getSourceMap().get(id);
+    public DataSourceEntity getDataSourceDetail(@RequestParam(name = "id") String id) {
+        return dataSourceRepository.findById(id).get();
     }
 
     @PostMapping("/source/route")

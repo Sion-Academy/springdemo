@@ -11,8 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DataSourceRegisterBean {
+    private String name;
     private String type;
     private JsonNode detail;
+    private String description;
 
     public String getProperties(String name){
         return detail.get(name).asText();
