@@ -58,7 +58,7 @@ public class RegistrationService implements CommandLineRunner {
         return agentRoute;
     }
 
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 10000)
     public void checkAgentStatuses() {
         long currentTime = System.currentTimeMillis();
         registrations.forEach((id, info) -> {

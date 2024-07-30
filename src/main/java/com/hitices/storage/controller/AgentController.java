@@ -7,6 +7,7 @@ import com.hitices.storage.core.StorageAgent;
 import com.hitices.storage.service.DatabaseService;
 import com.hitices.storage.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +26,7 @@ public class AgentController {
     @Autowired
     private DatabaseService databaseService;
 
+    @PreAuthorize("hasPermission('agent', 'read')")
     @GetMapping("/agent/list")
     public List<StorageAgent> listAgents() {
         return registrationService.listAgents();
@@ -35,6 +37,7 @@ public class AgentController {
         return  databaseService.getDatabase(id);
     }
 
+    @PreAuthorize("hasPermission(#id, 'read')")
     @GetMapping("/agent/detail")
     public StorageAgent getAgentDetail(@RequestParam(name = "id") String id) {
         return registrationService.getAgent(id);
